@@ -11,49 +11,30 @@ interface IProps {
 const Home: NextPage = () => {
 
   //const [data, setData] = useState<IProps>({} as IProps)
-  const [name, setName] = useState<string>()
-  const [email, setEmail] = useState<string>()
-  const [password, setPassword] = useState<string>()
-
-
+  const [newName, setNewName] = useState<string>()
 
   const handleSubmit = async () => {
     try{
-      await api.post('/account', {
-        name,
-        email,
-        password
+      await api.put('/account/di@di', {
+        name : newName
       })
     }catch(e:any){ 
-      alert("Esse e-mail já esta cadastrado")
-    }
-    
+      alert("Algo deu errado")
+    }    
   }
 
-  const handleShow = () => {
-    api.get('/show').then(response => console.log(response.data) )
+  const handleDelete = () => {
+    api.delete('/account/di@di').then(response => console.log(response.data) )
   }
 
   return (
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center'>
-    <h1>Cadastro</h1>
-    <p>Nome:</p>
+    <h1>Editar Perfil</h1>
+    <p>Nome Novo:</p>
     <input 
       type="text" 
       className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setName(e.target.value)}
-    />
-    <p>Email:</p>
-    <input 
-      type="text" 
-      className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setEmail(e.target.value)}
-    />
-    <p>Senha:</p>
-    <input 
-      type="text" 
-      className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setPassword(e.target.value)}
+      onChange={(e) => setNewName(e.target.value)}
     />
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
@@ -64,9 +45,9 @@ const Home: NextPage = () => {
     <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        handleShow
+        handleDelete
       }
-     >Verficiar</button>
+     >Deletar Usuário</button>
    </div>
   )
 }

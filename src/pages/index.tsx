@@ -17,13 +17,8 @@ const Home: NextPage = () => {
 
 
   const handleSubmit = async () => {
-    const user = {
-      password,
-      email
-    }
-    console.log(user)
     try{
-      await api.post('/account', {password, email})
+      api.post('/login', { email, password }).then(response => console.log(response.data) )
     }catch(e:any){ 
       alert("Esse e-mail já esta cadastrado")
     }
