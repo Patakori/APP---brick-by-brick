@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import Error from 'next/error';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
 import { api } from '../service/api'
 
@@ -8,10 +9,12 @@ interface IProps {
   email:string;
 }
 
-const Home: NextPage = () => {
+export default function EditProfile (){
 
   //const [data, setData] = useState<IProps>({} as IProps)
   const [newName, setNewName] = useState<string>()
+
+  const { push } = useRouter()
 
   const handleSubmit = async () => {
     try{
@@ -23,8 +26,9 @@ const Home: NextPage = () => {
     }    
   }
 
-  const handleDelete = () => {
-    api.delete('/account/di@di').then(response => console.log(response.data) )
+  const handleDelete = async () => {
+    await api.delete('/account/di@di').then(response => console.log(response.data) )
+    await push("/")
   }
 
   return (
@@ -33,7 +37,7 @@ const Home: NextPage = () => {
     <p>Nome Novo:</p>
     <input 
       type="text" 
-      className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
+      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
       onChange={(e) => setNewName(e.target.value)}
     />
     <button 
@@ -51,5 +55,3 @@ const Home: NextPage = () => {
    </div>
   )
 }
-
-export default Home

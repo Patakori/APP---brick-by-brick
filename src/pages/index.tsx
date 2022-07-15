@@ -1,7 +1,9 @@
 import type { NextPage } from 'next'
 import Error from 'next/error';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
 import { api } from '../service/api'
+import Cookies from 'js-cookie'
 
 interface IProps {
   name:string;
@@ -13,20 +15,19 @@ const Home: NextPage = () => {
   //const [data, setData] = useState<IProps>({} as IProps)
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
+  const [logged, setLogged] = useState<string>("")
 
-
+  const { push }= useRouter()
 
   const handleSubmit = async () => {
     try{
-      api.post('/login', { email, password }).then(response => console.log(response.data) )
+      await api.post('/login', { email, password }).then(()=>setLogged('true')).then(async()=>await Cookies.set("logged", "true"))
+      await push('http://localhost:3000/editProfile')
     }catch(e:any){ 
-      alert("Esse e-mail já esta cadastrado")
+      setLogged('false')
+      Cookies.set("logged", "false")
     }
     
-  }
-
-  const handleShow = () => {
-    api.get('/show').then(response => console.log(response.data) )
   }
 
   return (
@@ -35,13 +36,13 @@ const Home: NextPage = () => {
     <p>Email:</p>
     <input 
       type="text" 
-      className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
+      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
       onChange={(e) => setEmail(e.target.value)}
     />
     <p>Senha:</p>
     <input 
       type="text" 
-      className='flex rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
+      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
       onChange={(e) => setPassword(e.target.value)}
     />
     <button 
@@ -49,13 +50,11 @@ const Home: NextPage = () => {
       onClick={
         handleSubmit
       }
-    >Enviar</button>
+    >Entrar</button>
     <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={
-        handleShow
-      }
-     >Verficiar</button>
+      onClick={()=>push('http://localhost:3000/registration')}
+     >Cadastrar</button>
    </div>
   )
 }
