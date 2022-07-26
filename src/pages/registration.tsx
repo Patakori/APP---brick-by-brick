@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Error from 'next/error';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
-import { api } from '../service/api'
+import { api } from '../service/api-old'
 
 interface IProps {
   name:string;

@@ -1,8 +1,11 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Error from 'next/error';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react'
-import { api } from '../service/api'
+import { parseCookies } from 'nookies';
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../context/AuthContext';
+import { api } from '../service/api-old'
+import { getAPIClient } from '../service/axios';
 
 interface IProps {
   name:string;
@@ -13,6 +16,7 @@ export default function EditProfile (){
 
   //const [data, setData] = useState<IProps>({} as IProps)
   const [newName, setNewName] = useState<string>()
+  const { user } = useContext(AuthContext)
 
   const { push } = useRouter()
 
@@ -54,4 +58,24 @@ export default function EditProfile (){
      >Deletar Usuário</button>
    </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const apiClient = getAPIClient(ctx);
+  const { ['nextauth.token']: token } = parseCookies(ctx)
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+
+  await apiClient.get('/users')
+
+  return {
+    props: {}
+  }
 }
