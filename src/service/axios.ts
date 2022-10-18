@@ -18,9 +18,10 @@ export function getAPIClient(ctx?: any) {
   //   return config;
   // })
 
-  if (token) {
-    api.defaults.headers.common['Authorization'] = token;
-  }
+  // if (token) {
+  //   console.log("bearer")
+  //   api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  // }
 
   return api;
 }

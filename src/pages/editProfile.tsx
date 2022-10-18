@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { parseCookies } from 'nookies';
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../context/AuthContext';
-import { api } from '../service/api-old'
+import { api } from '../service/axios'
 import { getAPIClient } from '../service/axios';
 
 interface IProps {
@@ -25,6 +25,14 @@ export default function EditProfile (){
       await api.put('/account/di@di', {
         name : newName
       })
+    }catch(e:any){ 
+      alert("Algo deu errado")
+    }    
+  }
+
+  const testeGet = async () => {
+    try{
+      await api.get('/user').then(response => console.log(response.data))
     }catch(e:any){ 
       alert("Algo deu errado")
     }    
@@ -56,15 +64,35 @@ export default function EditProfile (){
         handleDelete
       }
      >Deletar Usuário</button>
+
+    <button
+      className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
+      onClick={
+        testeGet
+      }
+     >Testar Get</button>
    </div>
+   
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const apiClient = getAPIClient(ctx);
-  const { ['nextauth.token']: token } = parseCookies(ctx)
+  const { ['auth.token']: token } = parseCookies(ctx)
 
-  if (!token) {
+  console.log("token", token)
+
+  const validateToken = await api.get('/validateToken',{
+    headers: {
+      'Authorization': `token ${token}`
+    }
+  }).catch((error)=>{
+    console.log(error.response.status)
+  })
+
+  console.log("validateToken", validateToken?.status)
+
+  if (!token || !validateToken) {
     return {
       redirect: {
         destination: '/',
@@ -73,7 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  await apiClient.get('/users')
+  // 
 
   return {
     props: {}

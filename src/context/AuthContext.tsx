@@ -1,8 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
 import { setCookie, parseCookies } from 'nookies'
 import Router from 'next/router'
-import { api } from "../service/api";
-
+import { api } from "../service/axios";
+import jwt_decode from "jwt-decode";
 
 interface User {
   name: string;
@@ -18,6 +18,7 @@ interface SignInData {
 interface AuthContextType {
   user: User | null;
   signIn: (data: SignInData) => Promise<void>
+  isAuthenticated:  boolean
 }
 
 interface ResponseData {
@@ -31,45 +32,37 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }:any) {
   // Informações do usuário
-  const [user, setUser] = useState<User | null>(null)
-
-  // const isAuthenticated = !!user;
-
-  useEffect(() => {
-   
-
-    if(!user){
-      const { 'nextauth.token': token } = parseCookies()
-
-      if(token){
-
-        api.get('/user').then((response: { data: { name: any; email: any; }; })=>{
-          const user: User = {
-            name: response.data.name,
-            email: response.data.email
-          }
-
-          setUser(user)
-        })
+  const [user, setUser] = useState<any>()
   
+  useEffect(() => {
+    const { 'auth.token': token } = parseCookies()
 
-      }
+    console.log("EFFECT", token)
+
+    if (token) {
+      console.log("response")
+      api.get('/recoveryUser',{
+        headers: {
+          'Authorization': `token ${token}`
+        }
+      }).then(response => {
+        console.log("response", response)
+        setUser(response.data)
+      })
     }
-
-
-
-
-    
   }, [])
+
+  const isAuthenticated = !!user;
 
   async function signIn({ email, password }: SignInData) {
 
     const data:ResponseData = await api.post('/login', { email, password })
 
     const token = data.data.token
-    setUser(data.data.user)
+    const decoded:any = jwt_decode(token);
+    setUser(decoded.user)
 
-    console.log("dataaaa", data.data.user)
+    console.log("dataaaa", decoded.user)
 
     setCookie(undefined, 'auth.token', token, {
       maxAge: 60 * 60 * 1, // 1 hour
@@ -81,7 +74,7 @@ export function AuthProvider({ children }:any) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, signIn }}>
+    <AuthContext.Provider value={{ user, signIn, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   )
