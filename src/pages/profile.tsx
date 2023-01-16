@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 export default function Profile() {
   const { user } = useContext(AuthContext)
   const { push } = useRouter()
-  console.log("userrrContext", user)
 
   // useEffect(() => {
   //   api.get('/show');
@@ -42,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx:any) => {
       'Authorization': `token ${token}`
     }
   }).catch((error)=>{
-    console.log(error.response.status)
+    console.log(error?.response?.status)
   })
 
   console.log("validateToken", validateToken?.status)

@@ -3,6 +3,7 @@ import { setCookie, parseCookies } from 'nookies'
 import Router from 'next/router'
 import { api } from "../service/axios";
 import jwt_decode from "jwt-decode";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 interface User {
   name: string;
@@ -33,45 +34,50 @@ export const AuthContext = createContext({} as AuthContextType)
 export function AuthProvider({ children }:any) {
   // Informações do usuário
   const [user, setUser] = useState<any>()
-  
-  useEffect(() => {
-    const { 'auth.token': token } = parseCookies()
+  const queryClient = useQueryClient()
 
-    console.log("EFFECT", token)
+  const { 'auth.token': token } = parseCookies()
 
-    if (token) {
-      console.log("response")
-      api.get('/recoveryUser',{
-        headers: {
-          'Authorization': `token ${token}`
-        }
-      }).then(response => {
-        console.log("response", response)
-        setUser(response.data)
-      })
+  useQuery("verifyAuthToken", () => api.get('/recoveryUser',{
+    headers: {
+      'Authorization': `token ${token}`
     }
-  }, [])
+  }).then(response => {
+    console.log("response", response)
+    setUser(response.data)
+  }))
 
   const isAuthenticated = !!user;
 
-  async function signIn({ email, password }: SignInData) {
+  const {mutate:login}:any = useMutation("", async(data: SignInData) => {
+    const loginPost = await api.post('/login', data).then(response => response.data);
+    console.log("data", loginPost)
+    
+    const token = loginPost.token
+    console.log("token", token)
 
-    const data:ResponseData = await api.post('/login', { email, password })
+    const decoded:any = await jwt_decode(token);
 
-    const token = data.data.token
-    const decoded:any = jwt_decode(token);
+    console.log("decoded.user", decoded)
+
     setUser(decoded.user)
-
-    console.log("dataaaa", decoded.user)
 
     setCookie(undefined, 'auth.token', token, {
       maxAge: 60 * 60 * 1, // 1 hour
     })
 
-    // api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
     Router.push('/profile');
+  });
+
+  async function signIn(data: SignInData) {
+    try {
+      await login(data);
+
+    } catch (error) {
+      console.error(error);
+    }
   }
+
 
   return (
     <AuthContext.Provider value={{ user, signIn, isAuthenticated }}>

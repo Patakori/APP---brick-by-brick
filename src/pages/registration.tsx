@@ -12,16 +12,17 @@ interface IProps {
 export default function Registration (){
 
   //const [data, setData] = useState<IProps>({} as IProps)
-  const [name, setName] = useState<string>()
+  const [username, setUserName] = useState<string>()
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
 
   const{ push } = useRouter()
 
   const handleSubmit = async () => {
+    console.log("aquiiiFront", [username, email, password])
     try{
       await api.post('/account', {
-        name,
+        username,
         email,
         password
       }).then(()=>push('/'))
@@ -39,7 +40,7 @@ export default function Registration (){
     <input 
       type="text" 
       className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setName(e.target.value)}
+      onChange={(e) => setUserName(e.target.value)}
     />
     <p>Email:</p>
     <input 

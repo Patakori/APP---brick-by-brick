@@ -3,6 +3,8 @@ import Error from 'next/error';
 import { useRouter } from 'next/router';
 import { parseCookies } from 'nookies';
 import { useContext, useEffect, useState } from 'react'
+import { useQuery } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query/react';
 import { AuthContext } from '../context/AuthContext';
 import { api } from '../service/axios'
 import { getAPIClient } from '../service/axios';
@@ -18,11 +20,16 @@ export default function EditProfile (){
   const [newName, setNewName] = useState<string>()
   const { user } = useContext(AuthContext)
 
+  const queryClient = useQueryClient()
+
   const { push } = useRouter()
+  const key = ["user"]
+  const {data} = useQuery<IProps[]>(key, () => api.get('/show').then(response => response.data))
 
   const handleSubmit = async () => {
+    console.log("newName", user?.email)
     try{
-      await api.put('/account/di@di', {
+      await api.put(`/account/${user?.email}`, {
         name : newName
       })
     }catch(e:any){ 
@@ -30,16 +37,27 @@ export default function EditProfile (){
     }    
   }
 
-  const testeGet = async () => {
-    try{
-      await api.get('/user').then(response => console.log(response.data))
-    }catch(e:any){ 
-      alert("Algo deu errado")
-    }    
-  }
+  const { mutate } = useMutation(
+      () => api.put(`/account/${user?.email}`, {
+        name : newName
+      }),{
+        onSuccess:()=>{
+          queryClient.invalidateQueries("user")
+        }
+      }
+
+    )
+
+  // const testeGet = async () => {
+  //   try{
+  //     await api.get('/user').then(response => response.data)
+  //   }catch(e:any){ 
+  //     alert("Algo deu errado")
+  //   }    
+  // }
 
   const handleDelete = async () => {
-    await api.delete('/account/di@di').then(response => console.log(response.data) )
+    await api.delete('/account/di@di').then(response => response.data )
     await push("/")
   }
 
@@ -55,7 +73,8 @@ export default function EditProfile (){
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        handleSubmit
+        // handleSubmit
+        () => mutate()
       }
     >Enviar</button>
     <button
@@ -64,13 +83,17 @@ export default function EditProfile (){
         handleDelete
       }
      >Deletar Usuário</button>
-
-    <button
-      className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={
-        testeGet
-      }
-     >Testar Get</button>
+     <>
+    {
+      data?.map((user:any)=>{
+      return(
+        <p
+        key={user.id}
+        >{user.name}</p>
+      )
+    })
+    }
+</>
    </div>
    
   )
@@ -87,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       'Authorization': `token ${token}`
     }
   }).catch((error)=>{
-    console.log(error.response.status)
+    console.log(error.response?.status)
   })
 
   console.log("validateToken", validateToken?.status)

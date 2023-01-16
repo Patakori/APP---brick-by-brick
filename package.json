@@ -21,12 +21,14 @@
     "nookies": "^2.5.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-query": "^3.39.2",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.15",
     "@types/react-dom": "18.0.6",
+    "@types/react-query": "^1.2.9",
     "autoprefixer": "^10.4.7",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.0",
