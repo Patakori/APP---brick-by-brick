@@ -1,65 +1,58 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type { GetServerSideProps } from 'next'
 import Error from 'next/error';
 import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
-import { useContext, useEffect, useState } from 'react'
-import { useQuery } from 'react-query';
-import { useMutation, useQueryClient } from 'react-query/react';
+import { destroyCookie, parseCookies } from 'nookies';
+import { useContext, useState } from 'react'
+import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '../context/AuthContext';
 import { api } from '../service/axios'
 import { getAPIClient } from '../service/axios';
 
-interface IProps {
-  name:string;
-  email:string;
-}
-
 export default function EditProfile (){
 
-  //const [data, setData] = useState<IProps>({} as IProps)
   const [newName, setNewName] = useState<string>()
-  const { user } = useContext(AuthContext)
+  const { session } = useContext(AuthContext)
 
   const queryClient = useQueryClient()
 
   const { push } = useRouter()
-  const key = ["user"]
-  const {data} = useQuery<IProps[]>(key, () => api.get('/show').then(response => response.data))
 
-  const handleSubmit = async () => {
-    console.log("newName", user?.email)
-    try{
-      await api.put(`/account/${user?.email}`, {
-        name : newName
-      })
-    }catch(e:any){ 
-      alert("Algo deu errado")
-    }    
+  async function getUsers(){
+   const response = await api.get('/show');
+    return response.data;
   }
 
-  const { mutate } = useMutation(
-      () => api.put(`/account/${user?.email}`, {
-        name : newName
-      }),{
-        onSuccess:()=>{
-          queryClient.invalidateQueries("user")
-        }
-      }
+  const users = useQuery({
+    queryKey: ["user"],
+    queryFn: getUsers,
+  })
 
-    )
+  async function changeName(){
+    const response = await api.put(`/account/${session?.email}`, {
+     name : newName
+   })
+     return response.data;
+   }
 
-  // const testeGet = async () => {
-  //   try{
-  //     await api.get('/user').then(response => response.data)
-  //   }catch(e:any){ 
-  //     alert("Algo deu errado")
-  //   }    
-  // }
+    const changeNewName = useMutation({
+      mutationKey: ["user"],
+      mutationFn: changeName,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["user"])    
+      },
+    })
 
-  const handleDelete = async () => {
-    await api.delete('/account/di@di').then(response => response.data )
-    await push("/")
+  async function handleDelete(){
+    await api.delete(`/delete/${session?.email}`).then(response => response )
+    destroyCookie(undefined, "auth.token")
+    push("/")
   }
+
+  const deletedUser = useMutation({
+    mutationKey: ["user"],
+    mutationFn: handleDelete,
+  })
 
   return (
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center'>
@@ -73,19 +66,18 @@ export default function EditProfile (){
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        // handleSubmit
-        () => mutate()
+        () => changeNewName.mutateAsync()
       }
     >Enviar</button>
     <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        handleDelete
+        () => deletedUser.mutate()
       }
      >Deletar Usuário</button>
      <>
     {
-      data?.map((user:any)=>{
+      users.data?.map((user:any)=>{
       return(
         <p
         key={user.id}
@@ -103,17 +95,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const apiClient = getAPIClient(ctx);
   const { ['auth.token']: token } = parseCookies(ctx)
 
-  console.log("token", token)
-
-  const validateToken = await api.get('/validateToken',{
+  const validateToken = await apiClient.get('/recoveryUser',{
     headers: {
       'Authorization': `token ${token}`
     }
-  }).catch((error)=>{
-    console.log(error.response?.status)
+  }).then((response)=>{
+    return response
   })
-
-  console.log("validateToken", validateToken?.status)
 
   if (!token || !validateToken) {
     return {
@@ -123,8 +111,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     }
   }
-
-  // 
 
   return {
     props: {}

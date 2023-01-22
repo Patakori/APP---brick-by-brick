@@ -1,42 +1,28 @@
-import type { NextPage } from 'next'
-import Error from 'next/error';
+import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react'
-import { api } from '../service/axios'
-import Cookies from 'js-cookie'
+import { useState } from 'react'
+import {getAPIClient } from '../service/axios'
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-
-interface IProps {
-  name:string;
-  email:string;
-}
+import { parseCookies } from 'nookies';
 
 const Home: NextPage = () => {
 
-  //const [data, setData] = useState<IProps>({} as IProps)
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
   const [logged, setLogged] = useState<string>("")
 
-  const { signIn } = useContext(AuthContext)
+  const { signIn, session } = useContext(AuthContext)
 
   const handleSignIn = async (data: string | any) => {
     await signIn(data)
   }
 
-  const { push }= useRouter()
+  console.log("ai calicaa", session)
 
-  // const handleSubmit = async () => {
-  //   try{
-  //     await api.post('/login', { email, password }).then(()=>setLogged('true')).then(async()=>await Cookies.set("logged", "true"))
-  //     await push('http://localhost:3000/editProfile')
-  //   }catch(e:any){ 
-  //     setLogged('false')
-  //     Cookies.set("logged", "false")
-  //   }
-    
-  // }
+  
+
+  const { push } = useRouter()
 
   return (
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center'>
@@ -69,3 +55,32 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx:any) => {
+  const apiClient = getAPIClient(ctx);
+  const { ['auth.token']: token } = parseCookies(ctx)
+
+  if(token){
+    const validateToken = await apiClient.get('/recoveryUser',{
+      headers: {
+        'Authorization': `token ${token}`
+      }
+    }).then((response)=>{
+      return response.data
+    })
+  
+    if (validateToken) {
+      return {
+        redirect: {
+          destination: '/profile',
+          permanent: false,
+        }
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
+}

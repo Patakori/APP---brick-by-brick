@@ -1,36 +1,35 @@
-import type { NextPage } from 'next'
-import Error from 'next/error';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { api } from '../service/axios'
 
-interface IProps {
-  name:string;
-  email:string;
-}
 
 export default function Registration (){
 
-  //const [data, setData] = useState<IProps>({} as IProps)
   const [username, setUserName] = useState<string>()
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
 
   const{ push } = useRouter()
 
-  const handleSubmit = async () => {
-    console.log("aquiiiFront", [username, email, password])
-    try{
-      await api.post('/account', {
-        username,
-        email,
-        password
-      }).then(()=>push('/'))
-    }catch(e:any){ 
-      alert("Esse e-mail já esta cadastrado")
-    }
-    
-  }
+  async function handleSubmit(){
+    const response = await api.post('/account', {
+      username,
+      email,
+      password
+    }).then(()=>push('/'))
+     return response;
+   }
+
+   const queryClient = useQueryClient()
+
+    const register = useMutation({
+      mutationKey: ["user"],
+      mutationFn: handleSubmit,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["user"])    
+      },
+    })
 
 
   return (
@@ -57,7 +56,7 @@ export default function Registration (){
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        handleSubmit
+       () => register.mutate()
       }
     >Enviar</button>
    </div>

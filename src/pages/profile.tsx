@@ -10,17 +10,14 @@ import { useRouter } from 'next/router'
 
 
 export default function Profile() {
-  const { user } = useContext(AuthContext)
+  const { session } = useContext(AuthContext)
   const { push } = useRouter()
 
-  // useEffect(() => {
-  //   api.get('/show');
-  // }, [])
 
   return (
     <div className='flex flex-col w-screen h-screen justify-center items-center text-black'>
-     <p>{user?.name}</p> 
-     <p>{user?.email}</p>
+     <p>{session?.name}</p> 
+     <p>{session?.email}</p>
    
      <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
@@ -34,17 +31,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx:any) => {
   const apiClient = getAPIClient(ctx);
   const { ['auth.token']: token } = parseCookies(ctx)
 
-  console.log("token", token)
-
-  const validateToken = await apiClient.get('/validateToken',{
+  const validateToken = await apiClient.get('/recoveryUser',{
     headers: {
       'Authorization': `token ${token}`
     }
-  }).catch((error)=>{
-    console.log(error?.response?.status)
+  }).then((response)=>{
+    return response
   })
-
-  console.log("validateToken", validateToken?.status)
 
   if (!token || !validateToken) {
     return {
