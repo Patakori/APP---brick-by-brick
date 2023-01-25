@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import UserServices from "../services/userServices";
 import { RecoveryUserQuery } from "../querys/recoveryUserQuery";
+import { VerifyPasswordAndEmail } from "../querys/verifyPasswordAndEmail";
 
 interface User {
   name: string;
@@ -36,10 +37,9 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }:any) {
 
-  const {push} = useRouter()
+  // const {push} = useRouter()
   // Informações do usuário
   const [user, setUser] = useState<any>()
-  const queryClient = useQueryClient()
 
   // const { 'auth.token': token } = parseCookies()
 
@@ -68,38 +68,54 @@ export function AuthProvider({ children }:any) {
    
   const isAuthenticated = !!user;
 
-  async function verifyPasswordAndEmail(data: SignInData){
-    const loginPost = await api.post('/login', data)
-    console.log("data", loginPost)
+  // async function verifyPasswordAndEmail(data: SignInData){
+  //   const loginPost = await api.post('/login', data)
+  //   console.log("data", loginPost)
     
-    const token = loginPost.data.token
+  //   const token = loginPost.data.token
 
-    const decoded:any = await jwt_decode(token);
+  //   const decoded:any = await jwt_decode(token);
 
-    console.log("decoded.user", decoded.user)
+  //   console.log("decoded.user", decoded.user)
 
-    setCookie(undefined, 'auth.token', token, {
-      maxAge: 60 * 60 * 1, // 1 hour
-    })
+  //   setCookie(undefined, 'auth.token', token, {
+  //     maxAge: 60 * 60 * 1, // 1 hour
+  //   })
 
-    return decoded.user
+  //   return decoded.user
 
-   }
+  //  }
 
-  //  const verify = UserServices.verifyPasswordAndEmail
 
-  const login = useMutation({
-    mutationFn: verifyPasswordAndEmail,
-    onSuccess: () => {
-      push('/profile');    
-    },
-  })
+  // const login = useMutation({
+  //   mutationFn: (data:any) => UserServices.verifyPasswordAndEmail(data),
+  //   onSuccess: () => {
+  //     push('/profile');    
+  //   },
+  // })
 
-   function signIn(data: SignInData) {
+  //  function signIn(data: SignInData) {
+  //   try { 
+  //     // const verify = UserServices.verifyPasswordAndEmail(data)
+
+  //     // console.log(verify)
+      
+  //     login.mutate(data)
+
+  //     console.log(login.mutate(data))
+
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  const login = VerifyPasswordAndEmail()
+
+  function signIn(data: SignInData) {
     try { 
-      const verify = UserServices.verifyPasswordAndEmail(data)
+      // const verify = UserServices.verifyPasswordAndEmail(data)
 
-      console.log(verify)
+      // console.log(verify)
       
       login.mutate(data)
 

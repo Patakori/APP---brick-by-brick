@@ -19,7 +19,7 @@ class UserService {
     return response.data;
  }
 
-  async verifyPasswordAndEmail(data: SignInData | null){
+  async verifyPasswordAndEmail(data: SignInData){
     if(data){
       const loginPost = await api.post('/login', data)
       
