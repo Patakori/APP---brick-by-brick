@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react'
-import { api } from '../service/axios'
+import { api } from '../axios/axios'
 
 
 export default function Registration (){

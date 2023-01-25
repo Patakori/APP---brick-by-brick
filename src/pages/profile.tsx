@@ -3,9 +3,9 @@ import { Fragment, useContext, useEffect } from 'react'
 import Head from 'next/head'
 import { parseCookies } from 'nookies'
 import { AuthContext } from '../context/AuthContext'
-import { api } from '../service/axios'
+import { api } from '../axios/axios'
 import { GetServerSideProps } from 'next'
-import { getAPIClient } from '../service/axios'
+import { getAPIClient } from '../axios/axios'
 import { useRouter } from 'next/router'
 
 

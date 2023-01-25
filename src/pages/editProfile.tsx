@@ -6,8 +6,8 @@ import { useContext, useState } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '../context/AuthContext';
-import { api } from '../service/axios'
-import { getAPIClient } from '../service/axios';
+import { api } from '../axios/axios'
+import { getAPIClient } from '../axios/axios';
 
 export default function EditProfile (){
 

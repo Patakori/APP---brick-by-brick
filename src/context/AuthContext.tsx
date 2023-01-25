@@ -1,9 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
 import { setCookie, parseCookies } from 'nookies'
 import Router, { useRouter } from 'next/router'
-import { api } from "../service/axios";
+import { api } from "../axios/axios";
 import jwt_decode from "jwt-decode";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import UserServices from "../services/userServices";
+import { RecoveryUserQuery } from "../querys/recoveryUserQuery";
 
 interface User {
   name: string;
@@ -39,50 +41,38 @@ export function AuthProvider({ children }:any) {
   const [user, setUser] = useState<any>()
   const queryClient = useQueryClient()
 
-  const { 'auth.token': token } = parseCookies()
+  // const { 'auth.token': token } = parseCookies()
 
-
-
-  // const tokenExist = useQuery(["verifyAuthToken"], async () => await api.get('/recoveryUser',{
-  //   headers: {
-  //     'Authorization': `token ${token}`
-  //   }
-  // }).then(response => {
-  //   setUser(response.data)
-  // }))
-
-  async function recoveryUser(){
-    const response = api.get('/recoveryUser',{
-      headers: {
-        'Authorization': `token ${token}`
-      }
-    }).then(response => {
-      console.log("recoveryUser", response)
-      return response.data
-    })
+  // async function recoveryUser(){
+  //   const response = api.get('/recoveryUser',{
+  //     headers: {
+  //       'Authorization': `token ${token}`
+  //     }
+  //   }).then(response => {
+  //     console.log("recoveryUser", response)
+  //     return response.data
+  //   })
    
-     return response;
-   }
+  //    return response;
+  //  }
+
+  // const recoveryUser = UserServices.recoveryUser(token)
 
 
-    const verifyToken = useQuery({
-      queryKey: ["session"],
-      queryFn: recoveryUser
-    })
+  //   const verifyToken = useQuery({
+  //     queryKey: ["session"],
+  //     queryFn: () => recoveryUser
+  //   })
+
+  const verifyToken = RecoveryUserQuery()
    
-
-
   const isAuthenticated = !!user;
 
-  // const {mutate:login}:any = useMutation(["session"], async(data: SignInData) => {
-    
-  // });
-
   async function verifyPasswordAndEmail(data: SignInData){
-    const loginPost = await api.post('/login', data).then(response => response.data);
+    const loginPost = await api.post('/login', data)
     console.log("data", loginPost)
     
-    const token = loginPost.token
+    const token = loginPost.data.token
 
     const decoded:any = await jwt_decode(token);
 
@@ -96,6 +86,8 @@ export function AuthProvider({ children }:any) {
 
    }
 
+  //  const verify = UserServices.verifyPasswordAndEmail
+
   const login = useMutation({
     mutationFn: verifyPasswordAndEmail,
     onSuccess: () => {
@@ -105,14 +97,20 @@ export function AuthProvider({ children }:any) {
 
    function signIn(data: SignInData) {
     try { 
-      login.mutate(data);
+      const verify = UserServices.verifyPasswordAndEmail(data)
+
+      console.log(verify)
+      
+      login.mutate(data)
+
+      console.log(login.mutate(data))
 
     } catch (error) {
       console.error(error);
     }
   }
 
-  const session = login.data || verifyToken.data
+  const session = login?.data || verifyToken?.data
 
 
   return (

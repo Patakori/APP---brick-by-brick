@@ -1,27 +1,22 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router';
 import { useState } from 'react'
-import {getAPIClient } from '../service/axios'
+import {getAPIClient } from '../axios/axios'
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { parseCookies } from 'nookies';
+import { Header } from '../components/header';
 
 const Home: NextPage = () => {
 
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
-  const [logged, setLogged] = useState<string>("")
 
-  const { signIn, session } = useContext(AuthContext)
+  const { signIn } = useContext(AuthContext)
 
   const handleSignIn = async (data: string | any) => {
     await signIn(data)
   }
-
-  console.log("ai calicaa", session)
-
-  
-
   const { push } = useRouter()
 
   return (
@@ -41,9 +36,9 @@ const Home: NextPage = () => {
     />
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={() =>
+      onClick={async () =>
         //handleSubmit
-        handleSignIn({email, password})
+        await signIn({email, password})
       }
     >Entrar</button>
     <button
