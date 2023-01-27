@@ -14,14 +14,11 @@ const Home: NextPage = () => {
 
   const { signIn } = useContext(AuthContext)
 
-  const handleSignIn = async (data: string | any) => {
-    await signIn(data)
-  }
   const { push } = useRouter()
 
   return (
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center'>
-    <h1>Login</h1>
+    <h1>Login:</h1>
     <p>Email:</p>
     <input 
       type="text" 
@@ -43,7 +40,7 @@ const Home: NextPage = () => {
     >Entrar</button>
     <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={()=>push('http://localhost:3000/registration')}
+      onClick={()=>push('/registration')}
      >Cadastrar</button>
    </div>
   )
@@ -65,14 +62,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx:any) => {
       return response.data
     })
   
-    if (validateToken) {
-      return {
-        redirect: {
-          destination: '/profile',
-          permanent: false,
-        }
-      }
-    }
+    // if (validateToken) {
+    //   return {
+    //     redirect: {
+    //       destination: '/profile',
+    //       permanent: false,
+    //     }
+    //   }
+    // }
   }
 
   return {

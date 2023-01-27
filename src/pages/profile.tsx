@@ -21,7 +21,7 @@ export default function Profile() {
    
      <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={()=>push('http://localhost:3000/editProfile')}
+      onClick={()=>push('/editProfile')}
      >Editar</button>
     </div>
   )

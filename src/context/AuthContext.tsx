@@ -119,7 +119,7 @@ export function AuthProvider({ children }:any) {
       
       login.mutate(data)
 
-      console.log(login.mutate(data))
+      console.log("signin", login.isSuccess)
 
     } catch (error) {
       console.error(error);
@@ -127,6 +127,10 @@ export function AuthProvider({ children }:any) {
   }
 
   const session = login?.data || verifyToken?.data
+
+  useEffect(()=>{
+    console.log("consolelogin",login)
+   },[login])
 
 
   return (

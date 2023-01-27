@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react'
 import { api } from '../axios/axios'
+import { SubmitNewUser } from '../querys/submitNewUser';
 
 
 export default function Registration (){
@@ -9,27 +10,29 @@ export default function Registration (){
   const [username, setUserName] = useState<string>()
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
+  // const{ push } = useRouter()
 
-  const{ push } = useRouter()
 
-  async function handleSubmit(){
-    const response = await api.post('/account', {
-      username,
-      email,
-      password
-    }).then(()=>push('/'))
-     return response;
-   }
 
-   const queryClient = useQueryClient()
+  // async function handleSubmit(){
+  //   const response = await api.post('/account', {
+  //     username,
+  //     email,
+  //     password
+  //   }).then(()=>push('/'))
+  //    return response;
+  //  }
 
-    const register = useMutation({
-      mutationKey: ["user"],
-      mutationFn: handleSubmit,
-      onSuccess: () => {
-        queryClient.invalidateQueries(["user"])    
-      },
-    })
+  //  const queryClient = useQueryClient()
+
+  //   const register = useMutation({
+  //     mutationFn: handleSubmit,
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries(["session"])    
+  //     },
+  //   })
+
+  const register = SubmitNewUser()
 
 
   return (
@@ -56,7 +59,7 @@ export default function Registration (){
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-       () => register.mutate()
+       () => register.mutate({username, email, password})
       }
     >Enviar</button>
    </div>

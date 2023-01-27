@@ -7,6 +7,12 @@ export interface SignInData {
   password: string;
 }
 
+export interface NewUser {
+  username: string;
+  email: string;
+  password: string;
+}
+
 class UserService {
 
   async recoveryUser(token:string){
@@ -20,10 +26,13 @@ class UserService {
  }
 
   async verifyPasswordAndEmail(data: SignInData){
+    console.log("verifyPasswordAndEmail", data)
     if(data){
+      console.log("antes do get", data)
       const loginPost = await api.post('/login', data)
-      
+      console.log("loginPost", loginPost)
       const token = loginPost.data.token
+   
   
       const decoded:any = await jwt_decode(token);
   
@@ -33,9 +42,18 @@ class UserService {
   
       return decoded.user
     }
-    
-
    }
+
+   async createdNewUser({email,password,username}:NewUser){
+    const response = await api.post('/account', {
+      username,
+      email,
+      password
+    })
+    return response;
+   }
+
+
 
   
 }
