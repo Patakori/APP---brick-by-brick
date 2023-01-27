@@ -4,7 +4,6 @@ import Router, { useRouter } from 'next/router'
 import { api } from "../axios/axios";
 import jwt_decode from "jwt-decode";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import UserServices from "../services/userServices";
 import { RecoveryUserQuery } from "../querys/recoveryUserQuery";
 import { VerifyPasswordAndEmail } from "../querys/verifyPasswordAndEmail";
 

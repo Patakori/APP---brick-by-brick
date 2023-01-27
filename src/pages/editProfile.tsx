@@ -8,40 +8,50 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '../context/AuthContext';
 import { api } from '../axios/axios'
 import { getAPIClient } from '../axios/axios';
+import { GetAllUserQuery } from '../querys/getAllUser';
+import { ChangeName } from '../querys/changeName';
+import { UserServiceObject } from '../services/userServices';
 
 export default function EditProfile (){
 
-  const [newName, setNewName] = useState<string>()
+  const [newName, setNewName] = useState<string>("")
   const { session } = useContext(AuthContext)
 
   const queryClient = useQueryClient()
 
   const { push } = useRouter()
 
-  async function getUsers(){
-   const response = await api.get('/show');
-    return response.data;
-  }
+  // async function getUsers(){
+  //  const response = await api.get('/show');
+  //   return response.data;
+  // }
 
-  const users = useQuery({
-    queryKey: ["user"],
-    queryFn: getUsers,
-  })
+  // const users = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: () => UserServiceObject.getAllUser().then((response)=>response),
+  // })
 
-  async function changeName(){
-    const response = await api.put(`/account/${session?.email}`, {
-     name : newName
-   })
-     return response.data;
-   }
+  // console.log("users", users)
+  const email = session?.email
+  const name = newName
+  const users = GetAllUserQuery()
 
-    const changeNewName = useMutation({
-      mutationKey: ["user"],
-      mutationFn: changeName,
-      onSuccess: () => {
-        queryClient.invalidateQueries(["user"])    
-      },
-    })
+  // async function changeName(data:any){
+  //   const response = await api.put(`/account/${data.email}`, {
+  //    name : data.name
+  //  })
+  //    return response.data;
+  //  }
+
+  //   const changeNewName = useMutation({
+  //     mutationKey: ["users"],
+  //     mutationFn: (data:any) => changeName(data),
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries(["users"])    
+  //     },
+  //   })
+
+    const changeNewName = ChangeName()
 
   async function handleDelete(){
     await api.delete(`/delete/${session?.email}`).then(response => response )
@@ -66,12 +76,13 @@ export default function EditProfile (){
     <button 
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
-        () => changeNewName.mutateAsync()
+         () => changeNewName.mutate({email, name})
       }
     >Enviar</button>
     <button
       className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
       onClick={
+    
         () => deletedUser.mutate()
       }
      >Deletar Usuário</button>
