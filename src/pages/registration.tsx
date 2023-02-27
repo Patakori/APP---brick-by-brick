@@ -2,66 +2,90 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react'
 import { api } from '../axios/axios'
+import { Card } from '../components/Card';
+import { Input } from '../components/Input';
 import { SubmitNewUser } from '../querys/submitNewUser';
+import { z } from 'zod';
+import { Button } from '../components/Button';
+
+const registerSchema = z.object({
+  //name
+  username:
+  z.string({
+    required_error: 'digite o nome do usuário'
+  })
+  .min(5, { message: 'minimo 5 letras'}),
+  //email
+  email:
+  z.string({
+    required_error: 'digite o email do usuário'
+  })
+  .email({ message: 'email invalido'})
+  .min(5, { message: 'minimo 5 letras'}),
+
+  //password
+  password: z.string({
+    required_error: "digite a senha"
+  })
+  .min(5, { message: 'minimo 5 letras'}),
+})
+
+type SchemaRegister = z.infer<typeof registerSchema>
 
 
 export default function Registration (){
 
-  const [username, setUserName] = useState<string>()
-  const [email, setEmail] = useState<string>()
-  const [password, setPassword] = useState<string>()
-  // const{ push } = useRouter()
+  const [register, setRegister] = useState<SchemaRegister>({} as SchemaRegister)
+  const resultLogin = registerSchema.safeParse(register)
 
+  const allErrors = {
+    username: !resultLogin.success && resultLogin.error.formErrors.fieldErrors?.username?.[0],
+    email: !resultLogin.success && resultLogin.error.formErrors.fieldErrors?.email?.[0],
+    password: !resultLogin.success && resultLogin.error.formErrors.fieldErrors?.password?.[0]
+  }
 
-
-  // async function handleSubmit(){
-  //   const response = await api.post('/account', {
-  //     username,
-  //     email,
-  //     password
-  //   }).then(()=>push('/'))
-  //    return response;
-  //  }
-
-  //  const queryClient = useQueryClient()
-
-  //   const register = useMutation({
-  //     mutationFn: handleSubmit,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries(["session"])    
-  //     },
-  //   })
-
-  const register = SubmitNewUser()
+  const handleRegister = SubmitNewUser()
 
 
   return (
-   <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center'>
-    <h1>Cadastro</h1>
-    <p>Nome:</p>
-    <input 
-      type="text" 
-      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setUserName(e.target.value)}
-    />
-    <p>Email:</p>
-    <input 
-      type="text" 
-      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setEmail(e.target.value)}
-    />
-    <p>Senha:</p>
-    <input 
-      type="text" 
-      className='flex text-center rounded-full w-[200px] h-[40px] px-[10px] bg-gray-400' 
-      onChange={(e) => setPassword(e.target.value)}
-    />
-    <button 
-      className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={
-       () => register.mutate({username, email, password})
-      }
-    >Enviar</button>
+   <div 
+    className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center
+     bg-gray-800'
+    >
+    <Card title={'Cadastro'}>
+      <Input 
+        setOnChange={(e: any) => setRegister((prevState: any) => {
+          console.log(e.target?.value);
+          return ({ ...prevState, username: e.target?.value });
+        })}
+        title={'Nome'}
+        error={allErrors.username} 
+        textValidation={'nome valido'}
+      />
+      <Input 
+        setOnChange={(e:any) => setRegister((prevState:any) => {
+          console.log(e.target?.value)
+          return ({...prevState, email: e.target?.value})
+        })}
+        title={'Email'}
+        error={allErrors.email}
+        textValidation={'email valido'}
+      />
+      <Input 
+        setOnChange={(e:any) => setRegister((prevState:any) => {
+          console.log(e.target?.value)
+          return ({...prevState, password: e.target?.value})
+        })}
+        title={'Senha'}
+        error={allErrors.password}
+        textValidation={'senha valida'}
+      />
+      <Button 
+        onclickFunction={() => handleRegister.mutate(register)}
+        text={'Enviar'}
+      />
+    </Card>
+
    </div>
   )
 }

@@ -6,12 +6,9 @@ export function RecoveryUserQuery(){
 
   const { 'auth.token': token } = parseCookies()
 
-  const recoveryUser = UserServiceObject.recoveryUser(token)
-
-
   const verifyToken = useQuery({
     queryKey: ["session"],
-    queryFn: () => recoveryUser
+    queryFn: () => UserServiceObject.recoveryUser(token)
   })
 
   return verifyToken
