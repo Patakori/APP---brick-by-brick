@@ -5,9 +5,10 @@ interface PropsInput{
   title: string
   error: string | false | undefined
   textValidation: string
+  placeholder: string
 }
 
-export function Input({setOnChange, title, error, textValidation}:PropsInput){
+export function Input({setOnChange, title, error, textValidation, placeholder}:PropsInput){
   return(
     <div 
       className="flex flex-col"
@@ -19,8 +20,9 @@ export function Input({setOnChange, title, error, textValidation}:PropsInput){
       </p>
       <input 
         type="text" 
-        className='flex rounded-lg w-[200px] h-[40px] px-[16px] bg-gray-300' 
+        className='flex rounded-lg w-[200px] h-[40px] px-[16px] bg-gray-300 placeholder:text-xs my-[2px]' 
         onChange={setOnChange}
+        placeholder={placeholder}
       />
       {
         error ? 

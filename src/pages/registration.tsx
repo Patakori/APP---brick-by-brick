@@ -27,7 +27,7 @@ const registerSchema = z.object({
   password: z.string({
     required_error: "digite a senha"
   })
-  .min(5, { message: 'minimo 5 letras'}),
+  .min(5, { message: 'minimo 5 digitos'}),
 })
 
 type SchemaRegister = z.infer<typeof registerSchema>
@@ -59,8 +59,9 @@ export default function Registration (){
           return ({ ...prevState, username: e.target?.value });
         })}
         title={'Nome'}
-        error={allErrors.username} 
+        error={allErrors.username}
         textValidation={'nome valido'}
+        placeholder={'Digite o nome do usuário'}   
       />
       <Input 
         setOnChange={(e:any) => setRegister((prevState:any) => {
@@ -70,6 +71,7 @@ export default function Registration (){
         title={'Email'}
         error={allErrors.email}
         textValidation={'email valido'}
+        placeholder={'Digite o email do usuário'} 
       />
       <Input 
         setOnChange={(e:any) => setRegister((prevState:any) => {
@@ -79,6 +81,7 @@ export default function Registration (){
         title={'Senha'}
         error={allErrors.password}
         textValidation={'senha valida'}
+        placeholder={'Digite a senha'} 
       />
       <Button 
         onclickFunction={() => handleRegister.mutate(register)}

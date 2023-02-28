@@ -7,6 +7,8 @@ import { api } from '../axios/axios'
 import { GetServerSideProps } from 'next'
 import { getAPIClient } from '../axios/axios'
 import { useRouter } from 'next/router'
+import { Card } from '../components/Card'
+import { Button } from '../components/Button'
 
 
 export default function Profile() {
@@ -15,14 +17,13 @@ export default function Profile() {
 
 
   return (
-    <div className='flex flex-col w-screen h-screen justify-center items-center text-black'>
-     <p>{session?.name}</p> 
-     <p>{session?.email}</p>
-   
-     <button
-      className=' bg-orange-200 rounded-full w-[200px] h-[40px]'
-      onClick={()=>push('/editProfile')}
-     >Editar</button>
+    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center bg-slate-800'>
+      <Card title={`Bem vindo: ${session?.name}`} >
+        <Button 
+          onclickFunction={()=>push('/editProfile')}
+          text={'Editar'}
+        />
+      </Card>
     </div>
   )
 }

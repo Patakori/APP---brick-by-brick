@@ -53,8 +53,9 @@ const Home: NextPage = () => {
           return ({ ...prevState, email: e.target?.value });
         })}
         title={'Email:'}
-        error={allErrors?.email} 
+        error={allErrors?.email}
         textValidation={'email valido'}
+        placeholder={'Digite o email do usuário'}
       />
       <Input 
         setOnChange={(e:any) => setLogin((prevState:any) => {
@@ -64,6 +65,7 @@ const Home: NextPage = () => {
         title={'Senha:'}
         error={allErrors?.password}
         textValidation={'senha valida'}
+        placeholder={'Digite a senha'}
       />
       <Button 
       onclickFunction={() => {
