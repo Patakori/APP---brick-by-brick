@@ -8,11 +8,11 @@ interface PropsLayout{
 
 export default function Layout({ children }:PropsLayout) {
   return (
-    <div className="flex flex-col bg-white min-h-screen"
+    <div className="flex flex-col min-h-screen w-full bg-slate-800"
     >
       <Header />
 
-      <main className="flex w-full justify-center h-[90vh]">
+      <main className="flex w-full justify-center min-h-[90vh]">
         {children}
       </main>
     </div>

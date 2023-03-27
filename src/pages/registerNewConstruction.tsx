@@ -65,7 +65,7 @@ export default function RegisterNewConstruction() {
 
 
   return (
-    <div className='flex flex-col w-full gap-y-[10px] justify-start px-4 py-4 items-center bg-slate-800'>
+    <div className='flex flex-col w-full h-full gap-y-[10px] justify-start px-4 py-4 items-center'>
       <Card
         title={'Nova Obra'}
         width={'G'}
