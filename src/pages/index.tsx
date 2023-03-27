@@ -45,7 +45,10 @@ const Home: NextPage = () => {
   return (
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center bg-slate-800'>
     <Card 
-      title={'Login'}
+      title={'Login'} 
+      width={'P'}
+      align={'Center'}
+      alignTitle={'Center'}
     >
       <Input 
         setOnChange={(e: any) => setLogin((prevState: any) => {
@@ -56,6 +59,7 @@ const Home: NextPage = () => {
         error={allErrors?.email}
         textValidation={'email valido'}
         placeholder={'Digite o email do usuário'}
+        width={'G'}
       />
       <Input 
         setOnChange={(e:any) => setLogin((prevState:any) => {
@@ -66,14 +70,21 @@ const Home: NextPage = () => {
         error={allErrors?.password}
         textValidation={'senha valida'}
         placeholder={'Digite a senha'}
+        width={'G'}
       />
       <Button 
-      onclickFunction={() => {
-        console.log(login)
-        signIn(login)
-      }} 
-      text={'Entrar'} />
-      <Button onclickFunction={() => push('/registration')} text={'Cadastrar'} />
+        onclickFunction={() => {
+          console.log(login)
+          signIn(login)
+        }} 
+        text={'Entrar'}
+        align={'Center'}
+      />
+      <Button
+        onclickFunction={() => push('/registration')}
+        text={'Cadastrar'}
+        align={'Center'}
+      />
     </Card>
    </div>
   )

@@ -9,19 +9,27 @@ import { getAPIClient } from '../axios/axios'
 import { useRouter } from 'next/router'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
+import { Header } from '../components/Header'
+import Layout from '../components/Layout'
 
 
-export default function Profile() {
+export default function Constructions() {
   const { session } = useContext(AuthContext)
   const { push } = useRouter()
 
 
   return (
-    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center bg-slate-800'>
-      <Card title={`Bem vindo: ${session?.name}`} >
+    <div className='flex flex-col w-full gap-y-[10px] justify-center items-center bg-slate-800'>
+      <Card 
+        title={'Cadastrar Nova Obra'}
+        width={'P'}
+        align={'Center'}
+        alignTitle={'Center'}
+      >
         <Button 
-          onclickFunction={()=>push('/editProfile')}
-          text={'Editar'}
+          onclickFunction={() => push('/registerNewConstruction')}
+          text={'Cadastrar'}
+          align={'Center'}
         />
       </Card>
     </div>
@@ -53,3 +61,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx:any) => {
     props: {}
   }
 }
+
+Constructions.getLayout = function getLayout(page:any) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  );
+};

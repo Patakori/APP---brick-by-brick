@@ -92,8 +92,11 @@ export default function EditProfile (){
    <div className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center bg-slate-800'>
     <Card 
       title={'Editar perfil'}
+      width={'P'}
+      align={'Center'}
+      alignTitle={'Center'}
     >
-      <Input 
+      <Input
         setOnChange={(e: any) => setEdit((prevState: any) => {
           console.log(e.target?.value);
           return ({ ...prevState, name: e.target?.value });
@@ -102,14 +105,17 @@ export default function EditProfile (){
         error={allErrors?.name}
         textValidation={'Nome valido'}
         placeholder={'Digite o novo nome'}
+        width={'G'}
       />
       <Button 
         onclickFunction={() => changeNewName.mutate({name, email})}
         text={'Enviar'}
+        align={'Center'}
       />
       <Button 
         onclickFunction={() => deletedUser.mutate()}
         text={'Deletar Usuário'}
+        align={'Center'}
       />
     </Card>
     {/* <button 

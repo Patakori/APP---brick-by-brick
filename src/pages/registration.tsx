@@ -52,7 +52,12 @@ export default function Registration (){
     className='flex flex-col min-h-screen w-full gap-y-[10px] justify-center items-center
      bg-gray-800'
     >
-    <Card title={'Cadastro'}>
+    <Card
+      title={'Cadastro'}
+      width={'P'}
+      align={'Center'}
+      alignTitle={'Center'}
+    >
       <Input 
         setOnChange={(e: any) => setRegister((prevState: any) => {
           console.log(e.target?.value);
@@ -61,7 +66,8 @@ export default function Registration (){
         title={'Nome'}
         error={allErrors.username}
         textValidation={'nome valido'}
-        placeholder={'Digite o nome do usuário'}   
+        placeholder={'Digite o nome do usuário'}
+        width={'G'}   
       />
       <Input 
         setOnChange={(e:any) => setRegister((prevState:any) => {
@@ -71,7 +77,8 @@ export default function Registration (){
         title={'Email'}
         error={allErrors.email}
         textValidation={'email valido'}
-        placeholder={'Digite o email do usuário'} 
+        placeholder={'Digite o email do usuário'}
+        width={'G'}
       />
       <Input 
         setOnChange={(e:any) => setRegister((prevState:any) => {
@@ -81,11 +88,13 @@ export default function Registration (){
         title={'Senha'}
         error={allErrors.password}
         textValidation={'senha valida'}
-        placeholder={'Digite a senha'} 
+        placeholder={'Digite a senha'}
+        width={'G'}
       />
       <Button 
         onclickFunction={() => handleRegister.mutate(register)}
         text={'Enviar'}
+        align={'Center'}
       />
     </Card>
 

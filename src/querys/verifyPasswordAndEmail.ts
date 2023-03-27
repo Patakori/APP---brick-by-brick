@@ -10,7 +10,7 @@ export function VerifyPasswordAndEmail(){
   const login = useMutation({
     mutationFn: (data:any) => UserServiceObject?.verifyPasswordAndEmail(data),
     onSuccess: () => {
-      push('/profile');   
+      push('/constructions');   
     },
   })
 
